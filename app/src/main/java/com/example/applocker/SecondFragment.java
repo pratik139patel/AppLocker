@@ -1,6 +1,5 @@
 package com.example.applocker;
 
-import android.app.Activity;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.applocker.databinding.FragmentSecondBinding;
 
@@ -24,12 +22,12 @@ public class SecondFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-        super.onCreate(savedInstanceState);
-        super.getActivity().setContentView(R.layout.layout_main);
+        this.onCreate(savedInstanceState);
+        this.getActivity().setContentView(R.layout.fragment_second);
 
-        mListAppInfo = (ListView)super.getActivity().findViewById(R.id.lvApps);
+        mListAppInfo = (ListView)this.getActivity().findViewById(R.id.lvApps);
         // create new adapter
-        AppInfoAdapter adapter = new AppInfoAdapter(this.getContext(), Utilities.getInstalledApplication(this.getContext()), super.getActivity().getPackageManager());
+        AppInfoAdapter adapter = new AppInfoAdapter(this.getContext(), Utilities.getInstalledApplication(this.getContext()), this.getActivity().getPackageManager());
         // set adapter to list view
         mListAppInfo.setAdapter(adapter);
         // implement event when an item on list view is selected
@@ -47,19 +45,10 @@ public class SecondFragment extends Fragment {
 
         binding = FragmentSecondBinding.inflate(inflater, container, false);
         return binding.getRoot();
-
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        binding.buttonSecond.setOnClickListener(new View.OnClickListener() {
-                @Override
-            public void onClick(View view) {
-                NavHostFragment.findNavController(SecondFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
-            }
-        });
     }
 
     @Override
