@@ -2,20 +2,19 @@ package com.example.applocker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.applocker.databinding.FragmentFirstBinding;
-import com.google.android.material.snackbar.Snackbar;
 
 public class FirstFragment extends Fragment {
 
+    private static final String TAG = "FirstFragment";
     private FragmentFirstBinding binding;
 
     @Override
@@ -23,6 +22,7 @@ public class FirstFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
+        Log.d(TAG, "onCreate: Started");
         binding = FragmentFirstBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
