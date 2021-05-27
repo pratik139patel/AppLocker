@@ -1,12 +1,16 @@
 package com.example.applocker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 public class Utilities {
@@ -17,7 +21,21 @@ public class Utilities {
      * @return  list of installed applications
      */
     public static List getInstalledApplication(Context c) {
-        return c.getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
+        List<ApplicationInfo> apps = c.getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
+
+        for (int i = 0; i < apps.size();)
+        {
+            if((apps.get(i).flags & ApplicationInfo.FLAG_SYSTEM) == 1)
+            {
+                apps.remove(i);
+            }
+            else
+            {
+                ++i;
+            }
+        }
+
+        return apps;
     }
 
     /*
