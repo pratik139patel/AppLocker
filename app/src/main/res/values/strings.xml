@@ -9,4 +9,5 @@
     <string name="hello_first_fragment"></string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="sampleButton">Go to Stored apps</string>
+    <string name="action_database">Go to database</string>
 </resources>

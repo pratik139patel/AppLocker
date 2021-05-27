@@ -1,5 +1,6 @@
 package com.example.applocker;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -32,9 +33,6 @@ public class MainActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        // Add the list of all apps that are stored and saved here
-
-
     }
 
     @Override
@@ -50,9 +48,13 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        Log.d(TAG, "onOptionsItemSelected: Item was selected" + item.toString());
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        } else if (id == R.id.action_dataBase) {
+            Intent intent = new Intent(MainActivity.this, ListDataActivity.class);
+            startActivity(intent);
             return true;
         }
 
