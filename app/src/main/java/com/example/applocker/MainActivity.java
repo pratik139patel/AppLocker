@@ -1,5 +1,6 @@
 package com.example.applocker;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,12 +14,15 @@ import com.example.applocker.databinding.ActivityMainBinding;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +53,12 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         Log.d(TAG, "onOptionsItemSelected: Item was selected" + item.toString());
-        //noinspection SimplifiableIfStatement
+
+        // Check to see which item has been selected in the drop down menu
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_dataBase) {
+            // Go to the database storage area.
             Intent intent = new Intent(MainActivity.this, ListDataActivity.class);
             startActivity(intent);
             return true;

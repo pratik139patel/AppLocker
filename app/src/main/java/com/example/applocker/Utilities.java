@@ -10,10 +10,15 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class Utilities {
+
+    DatabaseHelper mDatabaseHelper;
 
     /*
      * Get all installed application on mobile and return a list
@@ -65,5 +70,36 @@ public class Utilities {
         }
         // by default, fail to launch
         return false;
+    }
+
+    /*
+    * getStoredApps:
+    *  using the data base helper, locate all the stored app names and
+    *   create a list by obtaining the actual apps.
+    * @param   c   Context of application
+    * @param   mDataBaseHelper  database
+    */
+    public static List getStoredApps(Context c, DatabaseHelper mDatabaseHelper) {
+        List<ApplicationInfo> apps = new ArrayList<>();
+
+        // Obtain the data from db
+        Cursor data = mDatabaseHelper.getData();
+        ArrayList<String> listData = new ArrayList<>();
+
+        // Use the strings to get app information
+        while (data.moveToNext()) {
+            String app = data.getString(1);
+
+            // Locate the app and add to list
+            try {
+                ApplicationInfo a = c.getPackageManager().getApplicationInfo(app, 0);
+                apps.add(a);
+            } catch (PackageManager.NameNotFoundException e) {
+                // Alert for any errors
+                Toast.makeText(c, "error in getting icon", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+        return apps;
     }
 }

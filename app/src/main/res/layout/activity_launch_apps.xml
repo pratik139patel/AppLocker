@@ -8,14 +8,6 @@
     android:layout_height="fill_parent"
     tools:context=".LaunchApps">
 
-    <Button
-        android:id="@+id/buttonTest"
-        android:layout_width="294dp"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:layout_gravity="center"
-        android:text="@string/sampleButton" />
-
     <ListView
         android:id="@+id/lvApps"
         android:layout_width="match_parent"

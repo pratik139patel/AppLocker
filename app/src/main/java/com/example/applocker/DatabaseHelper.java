@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -14,12 +15,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COL1 = "ID";
     private static final String COL2 = "packageInfo";
 
+
+
     public DatabaseHelper(Context context) {
+
         super(context, TABLE_NAME, null, 1);
+
     }
 
     /*
-    * Create our table that holds the string 'package name' for each saved
+    * Create table that holds the string 'package name' for each saved
     *  item.
     */
     @Override
@@ -34,19 +39,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addData(String item) {
+    /*
+    * isPresent:
+    *  Checks to see if the item is already present in the database.
+    * Returns true if found, else false.
+    */
+    private boolean isPresent(String searchItem) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String[] columns = { COL2 };  // locating packageInfo (COL2)
+        String selection = COL2 + " =?";
+        String[] selectionArgs = { searchItem };
+        String limit = "1";  // How many should be present in the database
+
+        Cursor cursor = db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null, limit);
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        // return if the item is found
+        return exists;
+    }
+
+    /*
+    * addData:
+    *  taking the provided item, add it to the database if it does not exist.
+    * @param: item to be added into database
+    * @post-condition: returns 0 if item not added, returns 1 if added, returns 2
+    *    if already present
+    */
+    public int addData(String item) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL2, item);
 
-        Log.d(TAG, "addData: Adding " + item + " to " + TABLE_NAME);
-        long result = db.insert(TABLE_NAME, null, contentValues);
-        if (result == -1) {
-            return false;
+        if (!isPresent(item)) {
+            Log.d(TAG, "addData: Adding " + item + " to " + TABLE_NAME);
+            long result = db.insert(TABLE_NAME, null, contentValues);
+            if (result == -1) {
+                return 0;
+            }
+            return 1;
         }
-        return true;
+        Log.e(TAG, "addData: Item already exists in the db");
+        return 2;
     }
 
+    /*
+    * getData:
+    *  Returns data set that is stored into the current writeable database.
+    *  Returns a cursor holding the row information
+    */
     public Cursor getData() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_NAME;
@@ -54,6 +94,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    /*
+    * getItemId:
+    *  gets the ID of the provided item.
+    *  Returns the cursor holding the row information
+    */
     public Cursor getItemID(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT " + COL1 + " FROM " + TABLE_NAME +
@@ -62,6 +107,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery(query, null);
     }
 
+    /*
+    * deleteApp:
+    *  Removes the app if it exists in the database
+    */
     public void deleteApp(int id, String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "DELETE FROM " + TABLE_NAME + " WHERE " +

@@ -25,7 +25,6 @@ public class LaunchApps extends AppCompatActivity {
     private static final String TAG = "LaunchApps";
     private ListView mListAppInfo;
     DatabaseHelper mDatabaseHelper;
-    private Button goToButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,28 +55,38 @@ public class LaunchApps extends AppCompatActivity {
                 }
             }
         });
-
-
-        goToButton = (Button) findViewById(R.id.buttonTest);
-        goToButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LaunchApps.this, ListDataActivity.class);
-                startActivity(intent);
-            }
-        });
-
     }
 
+    /*
+    * AddData:
+    *  This will add the provided app name to the database.
+    * Prints toast depending on the status of the data entry.
+    * @param: the new apps name
+    */
     public void AddData(String newApp) {
-        boolean insertData = mDatabaseHelper.addData(newApp);
-        if (insertData) {
-            toastMessage("App added successfully");
-        } else {
-            toastMessage("App was not successfully added");
+
+        // Toast message of data insertion status
+        switch(mDatabaseHelper.addData(newApp)) {
+            case 0:
+                toastMessage("App was not successfulyl added");
+                break;
+            case 1:
+                toastMessage("App was succesfully added");
+                break;
+            case 2:
+                toastMessage("App is already locked");
+                break;
+            default:  // Never should be triggered
+                toastMessage("Error in process");
         }
     }
 
+    /*
+    * toastMessage:
+    *  Prints the relevant message on the screen for the user.
+    *  Duration is short.
+    * @param: message to be displayed
+    */
     private void toastMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }

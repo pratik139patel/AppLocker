@@ -54,11 +54,10 @@ public class ListDataActivity extends AppCompatActivity {
                 }
                 if (itemID > -1) {
                     Log.d(TAG, "onItemClick: The ID is " + itemID);
+                    mDatabaseHelper.deleteApp(itemID,name);
                 } else {
                     Log.e(TAG, "onItemClick: THE ID WAS NOT ABLE TO BE FOUND");
                 }
-                mDatabaseHelper.deleteApp(itemID,name);
-
             }
         });
     }
