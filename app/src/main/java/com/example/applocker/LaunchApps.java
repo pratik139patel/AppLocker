@@ -55,9 +55,39 @@ public class LaunchApps extends AppCompatActivity {
         //NIGGA=======================================================================================================================
         PopupWindow menu = new PopupWindow(this);
         LinearLayout PopUpLayout = new LinearLayout(this);
+        EditText input = new EditText(this);
+        input.setBackgroundColor(Color.GREEN);
+        input.setTextSize(100);
         TextView tv = new TextView(this);
+        Button ok_btn = new Button(this);
+        Button cancel_btn = new Button(this);
+
+        ok_btn.setText("OK");
+        cancel_btn.setText("Cancel");
+
         tv.setBackgroundColor(Color.WHITE);
+
         PopUpLayout.addView(tv);
+        PopUpLayout.addView(ok_btn.getRootView());
+        PopUpLayout.addView(cancel_btn.getRootView());
+        PopUpLayout.addView(input.getRootView());
+
+        ok_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: Add password to DB
+                toastMessage("Password Saved");
+                menu.dismiss();
+            }
+        });
+
+        cancel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                menu.dismiss();
+            }
+        });
+
         PopUpLayout.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -116,19 +146,7 @@ public class LaunchApps extends AppCompatActivity {
     public void AddData(String newApp) {
 
         // Toast message of data insertion status
-        switch(mDatabaseHelper.addData(newApp)) {
-            case 0:
-                toastMessage("App was not successfulyl added");
-                break;
-            case 1:
-                toastMessage("App was succesfully added");
-                break;
-            case 2:
-                toastMessage("App is already locked");
-                break;
-            default:  // Never should be triggered
-                toastMessage("Error in process");
-        }
+//        mDatabaseHelper.addData(newApp, Password)
     }
 
     /*
