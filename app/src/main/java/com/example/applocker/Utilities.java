@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -28,15 +29,25 @@ public class Utilities {
     public static List getInstalledApplication(Context c) {
         List<ApplicationInfo> apps = c.getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
 
-        for (int i = 0; i < apps.size();)
+        final Intent intent = new Intent(Intent.ACTION_MAIN, null);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        final List<ResolveInfo> AppInAppDrawer = c.getPackageManager().queryIntentActivities(intent, 0);
+        boolean flag = true;
+
+        for (int i = apps.size() - 1; i >= 0; --i, flag = true)
         {
-            if((apps.get(i).flags & ApplicationInfo.FLAG_SYSTEM) == 1)
+            for(int j = 0; j < AppInAppDrawer.size(); ++j)
+            {
+                if(AppInAppDrawer.get(j).toString().contains(apps.get(i).packageName))
+                {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if(flag)
             {
                 apps.remove(i);
-            }
-            else
-            {
-                ++i;
             }
         }
 
