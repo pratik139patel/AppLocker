@@ -8,13 +8,22 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.applocker.databinding.ActivityMainBinding;
@@ -41,10 +50,48 @@ public class LaunchApps extends AppCompatActivity {
         AppInfoAdapter adapter = new AppInfoAdapter(this, Utilities.getInstalledApplication(this), getPackageManager());
         // set adapter to list view
         mListAppInfo.setAdapter(adapter);
+
+
+        //NIGGA=======================================================================================================================
+        PopupWindow menu = new PopupWindow(this);
+        LinearLayout PopUpLayout = new LinearLayout(this);
+        TextView tv = new TextView(this);
+        tv.setBackgroundColor(Color.WHITE);
+        PopUpLayout.addView(tv);
+        PopUpLayout.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus)
+                {
+                    menu.dismiss();
+                }
+            }
+        });
+
+        PopUpLayout.setOrientation(LinearLayout.VERTICAL);
+        menu.setContentView(PopUpLayout);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        menu.update(0, 0, displayMetrics.widthPixels - 250, displayMetrics.heightPixels - 1000);
+
+
+        //NIGGA=======================================================================================================================
+
+
         // implement event when an item on list view is selected
         mListAppInfo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView parent, View view, int pos, long id) {
+
+                //NIGGA=======================================================================================================================
+                if(menu.isShowing())
+                {
+                    menu.dismiss();
+                    return;
+                }
+
+                //NIGGA=======================================================================================================================
+
                 // get the list adapter
                 AppInfoAdapter appInfoAdapter = (AppInfoAdapter) parent.getAdapter();
                 // get selected item on the list
@@ -53,6 +100,9 @@ public class LaunchApps extends AppCompatActivity {
                 if (appInfo.packageName.length() != 0) {
                     AddData(appInfo.packageName);
                 }
+
+                tv.setText(appInfo.packageName);
+                menu.showAtLocation(PopUpLayout, Gravity.CENTER, 0, 0);
             }
         });
     }
