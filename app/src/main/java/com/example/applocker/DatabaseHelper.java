@@ -65,7 +65,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     * @post-condition: returns 0 if item not added, returns 1 if added, returns 2
     *    if already present
     */
-    public int addData(String item) {
+    public int addData(String item, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL2, item);

@@ -1,32 +1,25 @@
 package com.example.applocker;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
+import android.graphics.drawable.Icon;
+import android.media.Image;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.applocker.databinding.ActivityMainBinding;
 
 
 public class LaunchApps extends AppCompatActivity {
@@ -51,8 +44,6 @@ public class LaunchApps extends AppCompatActivity {
         // set adapter to list view
         mListAppInfo.setAdapter(adapter);
 
-
-        //NIGGA=======================================================================================================================
         PopupWindow menu = new PopupWindow(this);
         LinearLayout PopUpLayout = new LinearLayout(this);
         EditText input = new EditText(this);
@@ -62,11 +53,15 @@ public class LaunchApps extends AppCompatActivity {
         Button ok_btn = new Button(this);
         Button cancel_btn = new Button(this);
 
+        ImageView iconImage = new ImageView(this);
+
         ok_btn.setText("OK");
         cancel_btn.setText("Cancel");
 
-        tv.setBackgroundColor(Color.WHITE);
+        tv.setTextSize(20);
+        tv.setTextColor(Color.WHITE);
 
+        PopUpLayout.addView(iconImage);
         PopUpLayout.addView(tv);
         PopUpLayout.addView(ok_btn.getRootView());
         PopUpLayout.addView(cancel_btn.getRootView());
@@ -75,9 +70,11 @@ public class LaunchApps extends AppCompatActivity {
         ok_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: Add password to DB
+                mDatabaseHelper.addData(tv.getText().toString(), "");
                 toastMessage("Password Saved");
                 menu.dismiss();
+                AppInfoAdapter adapter = new AppInfoAdapter(v.getContext(), Utilities.getInstalledApplication(v.getContext()), getPackageManager());
+                mListAppInfo.setAdapter(adapter);
             }
         });
 
@@ -88,65 +85,29 @@ public class LaunchApps extends AppCompatActivity {
             }
         });
 
-        PopUpLayout.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus)
-                {
-                    menu.dismiss();
-                }
-            }
-        });
-
         PopUpLayout.setOrientation(LinearLayout.VERTICAL);
         menu.setContentView(PopUpLayout);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         menu.update(0, 0, displayMetrics.widthPixels - 250, displayMetrics.heightPixels - 1000);
 
-
-        //NIGGA=======================================================================================================================
-
-
         // implement event when an item on list view is selected
         mListAppInfo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView parent, View view, int pos, long id) {
-
-                //NIGGA=======================================================================================================================
+            public void onItemClick(AdapterView parent, View view, int pos, long id)
+            {
                 if(menu.isShowing())
                 {
                     menu.dismiss();
                     return;
                 }
 
-                //NIGGA=======================================================================================================================
-
-                // get the list adapter
-                AppInfoAdapter appInfoAdapter = (AppInfoAdapter) parent.getAdapter();
-                // get selected item on the list
-                ApplicationInfo appInfo = (ApplicationInfo) appInfoAdapter.getItem(pos);
-                // launch the selected application
-                if (appInfo.packageName.length() != 0) {
-                    AddData(appInfo.packageName);
-                }
-
-                tv.setText(appInfo.packageName);
+                ApplicationInfo appinfo = (ApplicationInfo) ((AppInfoAdapter) parent.getAdapter()).getItem(pos);
+                tv.setText(appinfo.loadLabel(getPackageManager()));
+                iconImage.setImageDrawable(appinfo.loadIcon(getPackageManager()));
                 menu.showAtLocation(PopUpLayout, Gravity.CENTER, 0, 0);
             }
         });
-    }
-
-    /*
-    * AddData:
-    *  This will add the provided app name to the database.
-    * Prints toast depending on the status of the data entry.
-    * @param: the new apps name
-    */
-    public void AddData(String newApp) {
-
-        // Toast message of data insertion status
-//        mDatabaseHelper.addData(newApp, Password)
     }
 
     /*

@@ -14,7 +14,6 @@ import com.example.applocker.databinding.ActivityMainBinding;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -32,7 +32,6 @@ public class FirstFragment extends Fragment {
         Log.d(TAG, "onCreate: Started");
         binding = FragmentFirstBinding.inflate(inflater, container, false);
         
-        
         // Altered the original layout to print the apps that are saved here instead.
         mDatabaseHelper = new DatabaseHelper(getContext());
         Log.d(TAG, "onCreate: Database helper was correctly initialized");

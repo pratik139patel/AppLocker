@@ -27,18 +27,19 @@ public class Utilities {
      * @return  list of installed applications
      */
     public static List getInstalledApplication(Context c) {
-        List<ApplicationInfo> apps = c.getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
+        List<ApplicationInfo> apps = new ArrayList<ApplicationInfo>();
 
         final Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         final List<ResolveInfo> AppInAppDrawer = c.getPackageManager().queryIntentActivities(intent, 0);
+        final List<ApplicationInfo> storedApps= getStoredApps(c, new DatabaseHelper(c));
         boolean flag = true;
 
-        for (int i = apps.size() - 1; i >= 0; --i, flag = true)
+        for (int i = AppInAppDrawer.size() - 1; i >= 0; --i, flag = true)
         {
-            for(int j = 0; j < AppInAppDrawer.size(); ++j)
+            for(int j = storedApps.size() - 1; j >= 0; --j)
             {
-                if(AppInAppDrawer.get(j).toString().contains(apps.get(i).packageName))
+                if(AppInAppDrawer.get(i).toString().contains(storedApps.get(j).packageName))
                 {
                     flag = false;
                     break;
@@ -47,7 +48,7 @@ public class Utilities {
 
             if(flag)
             {
-                apps.remove(i);
+                apps.add(AppInAppDrawer.get(i).activityInfo.applicationInfo);
             }
         }
 
