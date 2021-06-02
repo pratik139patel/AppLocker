@@ -1,16 +1,18 @@
 package com.example.applocker;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
-import android.graphics.drawable.Icon;
-import android.media.Image;
 import android.os.Bundle;
-import android.util.AttributeSet;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,8 +28,11 @@ public class LaunchApps extends AppCompatActivity {
 
     private static final String TAG = "LaunchApps";
     private ListView mListAppInfo;
-    DatabaseHelper mDatabaseHelper;
+    private DatabaseHelper mDatabaseHelper;
+    private PopupWindow menu = null;
+    private String selectedApp = "";
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,9 +51,26 @@ public class LaunchApps extends AppCompatActivity {
 
         PopupWindow menu = new PopupWindow(this);
         LinearLayout PopUpLayout = new LinearLayout(this);
+        InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+
         EditText input = new EditText(this);
-        input.setBackgroundColor(Color.GREEN);
-        input.setTextSize(100);
+        input.setInputType(InputType.TYPE_CLASS_TEXT); // | TYPE_PASSWORD
+        input.setBackgroundColor(Color.BLACK);
+        input.setText("Enter Password");
+
+        menu.setOutsideTouchable(true);
+
+        input.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                input.requestFocus();
+                input.setFocusableInTouchMode(true);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+//                if(!imm.isActive()) { imm.showSoftInput(input.getRootView(), InputMethodManager.SHOW_IMPLICIT); }
+                return false;
+            }
+        });
+
         TextView tv = new TextView(this);
         Button ok_btn = new Button(this);
         Button cancel_btn = new Button(this);
@@ -63,14 +85,14 @@ public class LaunchApps extends AppCompatActivity {
 
         PopUpLayout.addView(iconImage);
         PopUpLayout.addView(tv);
-        PopUpLayout.addView(ok_btn.getRootView());
-        PopUpLayout.addView(cancel_btn.getRootView());
         PopUpLayout.addView(input.getRootView());
 
+        PopUpLayout.addView(ok_btn.getRootView());
+        PopUpLayout.addView(cancel_btn.getRootView());
         ok_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabaseHelper.addData(tv.getText().toString(), "");
+                mDatabaseHelper.addData(selectedApp, "");
                 toastMessage("Password Saved");
                 menu.dismiss();
                 AppInfoAdapter adapter = new AppInfoAdapter(v.getContext(), Utilities.getInstalledApplication(v.getContext()), getPackageManager());
@@ -89,20 +111,15 @@ public class LaunchApps extends AppCompatActivity {
         menu.setContentView(PopUpLayout);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        menu.update(0, 0, displayMetrics.widthPixels - 250, displayMetrics.heightPixels - 1000);
+        menu.update(0, 0, displayMetrics.widthPixels - 250, displayMetrics.heightPixels - 1300);
 
         // implement event when an item on list view is selected
         mListAppInfo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView parent, View view, int pos, long id)
             {
-                if(menu.isShowing())
-                {
-                    menu.dismiss();
-                    return;
-                }
-
                 ApplicationInfo appinfo = (ApplicationInfo) ((AppInfoAdapter) parent.getAdapter()).getItem(pos);
+                selectedApp = appinfo.packageName;
                 tv.setText(appinfo.loadLabel(getPackageManager()));
                 iconImage.setImageDrawable(appinfo.loadIcon(getPackageManager()));
                 menu.showAtLocation(PopUpLayout, Gravity.CENTER, 0, 0);

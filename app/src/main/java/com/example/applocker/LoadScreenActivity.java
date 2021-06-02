@@ -21,7 +21,6 @@ public class LoadScreenActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         setContentView(R.layout.activity_load_screen);
 
-
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -29,6 +28,6 @@ public class LoadScreenActivity extends AppCompatActivity {
                 startActivity(new Intent(LoadScreenActivity.this, MainActivity.class));
                 finish();
             }
-        },2000);
+        },50);
     }
 }
