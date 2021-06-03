@@ -40,7 +40,7 @@ public class FirstFragment extends Fragment {
     private ListView mListAppInfo;
     private DatabaseHelper mDatabaseHelper;
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -85,7 +85,6 @@ public class FirstFragment extends Fragment {
         Button update_btn = new Button(this.getContext());
         Button remove_btn = new Button(this.getContext());
         Button cancel_btn = new Button(this.getContext());
-
         ImageView iconImage = new ImageView(this.getContext());
 
         update_btn.setText("Update");
