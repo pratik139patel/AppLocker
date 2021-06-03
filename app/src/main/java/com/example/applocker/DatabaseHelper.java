@@ -14,8 +14,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_NAME = "ApplicationInfo_table";
     private static final String COL1 = "ID";
     private static final String COL2 = "packageInfo";
-
-
+    private static final String COL3 = "userPassword";
 
     public DatabaseHelper(Context context) {
 
@@ -29,7 +28,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTable = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + COL2 + " TEXT)";
+        String createTable = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + COL2 + " TEXT, " +COL3+ " TEXT)";
+
         db.execSQL(createTable);
     }
 
@@ -69,9 +69,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL2, item);
+        contentValues.put(COL3, password);
 
         if (!isPresent(item)) {
-            Log.d(TAG, "addData: Adding " + item + " to " + TABLE_NAME);
             long result = db.insert(TABLE_NAME, null, contentValues);
             if (result == -1) {
                 return 0;
@@ -81,6 +81,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.e(TAG, "addData: Item already exists in the db");
         return 2;
     }
+
+    /*
+     * updateCol:
+     *  Updates the provided password for the app.
+     */
+    public void updateCol(String name, String updatedPassword) {
+
+        // Get app id
+        Cursor data = getItemID(name);
+        int id = -1;
+        while (data.moveToNext()) {
+            id = data.getInt(0);
+        }
+        // Update the table here if the item was located
+        if (id > -1) {
+            SQLiteDatabase db= this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put(COL2, name);
+            cv.put(COL3, updatedPassword);
+            db.update(TABLE_NAME, cv, "ID = ?", new String[]{Integer.toString(id)});
+        }
+    }
+
 
     /*
     * getData:

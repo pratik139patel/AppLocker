@@ -92,7 +92,7 @@ public class LaunchApps extends AppCompatActivity {
         ok_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabaseHelper.addData(selectedApp, "");
+                mDatabaseHelper.addData(selectedApp, "TEST LMAO");
                 toastMessage("Password Saved");
                 menu.dismiss();
                 AppInfoAdapter adapter = new AppInfoAdapter(v.getContext(), Utilities.getInstalledApplication(v.getContext()), getPackageManager());

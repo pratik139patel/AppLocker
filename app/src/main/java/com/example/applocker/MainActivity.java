@@ -56,11 +56,6 @@ public class MainActivity extends AppCompatActivity {
         // Check to see which item has been selected in the drop down menu
         if (id == R.id.action_settings) {
             return true;
-        } else if (id == R.id.action_dataBase) {
-            // Go to the database storage area.
-            Intent intent = new Intent(MainActivity.this, ListDataActivity.class);
-            startActivity(intent);
-            return true;
         }
 
         return super.onOptionsItemSelected(item);

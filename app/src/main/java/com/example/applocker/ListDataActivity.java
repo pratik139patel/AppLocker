@@ -36,7 +36,7 @@ public class ListDataActivity extends AppCompatActivity {
         Cursor data = mDatabaseHelper.getData();
         ArrayList<String> listData = new ArrayList<>();
         while (data.moveToNext()) {
-            listData.add(data.getString(1));
+            listData.add(data.getString(1) + data.getString(2));
         }
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listData);
         mlistView.setAdapter(adapter);

@@ -106,7 +106,7 @@ public class FirstFragment extends Fragment {
         update_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                mDatabaseHelper.updateDate(selectedApp, "");
+                mDatabaseHelper.updateCol(selectedApp, "testing this shit");
                 toastMessage("Password Updated");
                 menu.dismiss();
             }

@@ -7,10 +7,12 @@
         android:orderInCategory="2"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <!--
     <item
         android:id="@+id/action_dataBase"
         android:orderInCategory="1"
         android:title="@string/action_database"
         app:showAsAction="never"
         />
+     -->
 </menu>
