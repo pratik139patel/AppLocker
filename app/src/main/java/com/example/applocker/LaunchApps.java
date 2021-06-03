@@ -74,6 +74,22 @@ public class LaunchApps extends AppCompatActivity {
         TextView tv = new TextView(this);
         Button ok_btn = new Button(this);
         Button cancel_btn = new Button(this);
+//        Button keyboard_btn = new Button(this);
+//
+//        keyboard_btn.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//
+//                Log.v(TAG, "On Keyboard Button click event!");
+//
+//                input.requestFocus();
+//                input.setFocusableInTouchMode(true);
+//
+//                InputMethodManager imm = (InputMethodManager) getSystemService(c.INPUT_METHOD_SERVICE);
+//                imm.showSoftInput(input, InputMethodManager.SHOW_FORCED);
+//
+//            }
+//
+//        });
 
         ImageView iconImage = new ImageView(this);
 
@@ -89,6 +105,7 @@ public class LaunchApps extends AppCompatActivity {
 
         PopUpLayout.addView(ok_btn.getRootView());
         PopUpLayout.addView(cancel_btn.getRootView());
+//        PopUpLayout.addView(keyboard_btn.getRootView());
         ok_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
