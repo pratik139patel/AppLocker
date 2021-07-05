@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.DisplayMetrics;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.applocker.databinding.FragmentFirstBinding;
@@ -40,7 +42,13 @@ public class FirstFragment extends Fragment {
     private ListView mListAppInfo;
     private DatabaseHelper mDatabaseHelper;
 
-    @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
+    // For the popup menu
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
+    private EditText passwordField;
+    private Button remove_btn, cancel_btn, update_btn;
+    private ImageView icon;
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -55,11 +63,12 @@ public class FirstFragment extends Fragment {
         
         // Use the binding to locate the list view then apply the adapter to it
         mListAppInfo = binding.savedAppsTest;
-        AppInfoAdapter adapter = new AppInfoAdapter(getContext(), Utilities.getStoredApps(getContext(), mDatabaseHelper), super.getActivity().getPackageManager());
+        AppInfoAdapter adapter = new AppInfoAdapter(getContext(), Utilities.getStoredApps(getContext(),
+                mDatabaseHelper), super.getActivity().getPackageManager());
         mListAppInfo.setAdapter(adapter);
         Log.d(TAG, "onCreateView: List View correctly updated");
 
-        PopupWindow menu = new PopupWindow(this.getContext());
+        /*PopupWindow menu = new PopupWindow(this.getContext());
         LinearLayout PopUpLayout = new LinearLayout(this.getContext());
         InputMethodManager imm = (InputMethodManager) this.getContext().getSystemService(this.getContext().INPUT_METHOD_SERVICE);
 
@@ -114,17 +123,7 @@ public class FirstFragment extends Fragment {
         remove_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Cursor data = mDatabaseHelper.getItemID(selectedApp);
-                int itemID = -1;
-                while (data.moveToNext())
-                {
-                    itemID = data.getInt(0);
-                }
-
-                Log.e(TAG, Integer.toString(itemID));
-                Log.e(TAG, selectedApp);
-
-                mDatabaseHelper.deleteApp(itemID, selectedApp);
+                mDatabaseHelper.deleteApp(selectedApp);
                 toastMessage("Password Removed");
                 menu.dismiss();
                 AppInfoAdapter adapter = new AppInfoAdapter(v.getContext(), Utilities.getStoredApps(v.getContext(), mDatabaseHelper), v.getContext().getPackageManager());
@@ -145,15 +144,14 @@ public class FirstFragment extends Fragment {
         this.getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         menu.update(0, 0, displayMetrics.widthPixels - 250, displayMetrics.heightPixels - 1300);
 
+*/
         // Make it possible to remove apps from here directly
         mListAppInfo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ApplicationInfo appinfo = (ApplicationInfo)parent.getItemAtPosition(position);
-                selectedApp = appinfo.packageName;
-                tv.setText(appinfo.loadLabel(view.getContext().getPackageManager()));
-                iconImage.setImageDrawable(appinfo.loadIcon(view.getContext().getPackageManager()));
-                menu.showAtLocation(PopUpLayout, Gravity.CENTER, 0, 0);
+                // Passes Drawable icon, and the package name
+                createNewPopup(appinfo.loadIcon(getContext().getPackageManager()), appinfo.packageName);
             }
         });
         
@@ -166,7 +164,6 @@ public class FirstFragment extends Fragment {
         binding.addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //NavHostFragment.findNavController(FirstFragment.this).navigate(R.id.action_FirstFragment_to_SecondFragment);
                 Intent intent = new Intent(getActivity(), LaunchApps.class);
                 startActivity(intent);
             }
@@ -177,6 +174,57 @@ public class FirstFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    public void createNewPopup(Drawable appIconImage, String packageName) {
+        Log.d(TAG, "createNewPopup: Generating Popup to Manage Apps");
+        dialogBuilder = new AlertDialog.Builder(super.getContext());
+        final View popupView = getLayoutInflater().inflate(R.layout.manage_saved_app_popup, null);
+
+        // Get the edittext, icon, and buttons attached from layout
+        passwordField = (EditText) popupView.findViewById(R.id.update_password_field);
+        remove_btn = (Button) popupView.findViewById(R.id.remove_btn);
+        cancel_btn = (Button) popupView.findViewById(R.id.cancel_btn);
+        update_btn = (Button) popupView.findViewById(R.id.update_btn);
+        icon = (ImageView) popupView.findViewById(R.id.savedAppIcon);
+
+        // Set the image to the icon provided
+        icon.setImageDrawable(appIconImage);
+
+        // Create the popup view
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+        // Add button functionality for both buttons
+        update_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Obtain password and package name and store in DB
+                String password = passwordField.getText().toString();
+                mDatabaseHelper.updateCol(packageName, password);
+                toastMessage("Password Updated");
+                dialog.dismiss();
+            }
+        });
+        remove_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDatabaseHelper.deleteApp(packageName);
+                toastMessage("Password Removed");
+                dialog.dismiss();
+
+                // "Refreshes" the list view to show changes
+                AppInfoAdapter adapter = new AppInfoAdapter(v.getContext(), Utilities.getStoredApps(v.getContext(), mDatabaseHelper), v.getContext().getPackageManager());
+                mListAppInfo.setAdapter(adapter);
+            }
+        });
+        cancel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 
     private void toastMessage(String message) {

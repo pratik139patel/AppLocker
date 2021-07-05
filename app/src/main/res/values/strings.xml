@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">App Locker</string>
     <string name="action_settings">Settings</string>
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">Locked Apps</string>
     <string name="next">Next</string>
@@ -10,4 +11,14 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="sampleButton">Go to Stored apps</string>
     <string name="action_database">Go to database</string>
+
+    <!-- Pop-up Menu strings -->
+    <string name="image_info">App Image Icon</string>
+    <string name="generate_popup">Generate Popup</string>
+    <string name="save_password">Save</string>
+    <string name="cancel_update">Cancel</string>
+    <string name="editText_hint">New Password</string>
+    <string name="update_btn">Update</string>
+    <string name="remove_btn">Remove</string>
+
 </resources>

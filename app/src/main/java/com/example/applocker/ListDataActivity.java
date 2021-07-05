@@ -46,18 +46,7 @@ public class ListDataActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String name = parent.getItemAtPosition(position).toString();
                 Log.d(TAG, "onItemClick: Clicked on " + name);
-
-                Cursor data = mDatabaseHelper.getItemID(name);
-                int itemID = -1;
-                while (data.moveToNext()) {
-                    itemID = data.getInt(0);
-                }
-                if (itemID > -1) {
-                    Log.d(TAG, "onItemClick: The ID is " + itemID);
-                    mDatabaseHelper.deleteApp(itemID,name);
-                } else {
-                    Log.e(TAG, "onItemClick: THE ID WAS NOT ABLE TO BE FOUND");
-                }
+                    mDatabaseHelper.deleteApp(name);
             }
         });
     }

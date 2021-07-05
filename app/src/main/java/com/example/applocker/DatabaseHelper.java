@@ -78,7 +78,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             return 1;
         }
-        Log.e(TAG, "addData: Item already exists in the db");
+        Log.e(TAG, "addData: Failed to add Item, it already exists in the db!");
         return 2;
     }
 
@@ -98,8 +98,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (id > -1) {
             SQLiteDatabase db= this.getWritableDatabase();
             ContentValues cv = new ContentValues();
-            cv.put(COL2, name);
-            cv.put(COL3, updatedPassword);
+
+            cv.put(COL3, updatedPassword);  // Add the updated password
             db.update(TABLE_NAME, cv, "ID = ?", new String[]{Integer.toString(id)});
         }
     }
@@ -134,13 +134,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     * deleteApp:
     *  Removes the app if it exists in the database
     */
-    public void deleteApp(int id, String name) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String query = "DELETE FROM " + TABLE_NAME + " WHERE " +
-                COL1 + " = '" + id + "' AND " + COL2 + " ='" + name + "'";
-        Log.d(TAG, "deleteApp: query: " + query);
-        Log.d(TAG, "deleteApp: Deleting: " + name + " from database");
-        db.execSQL(query);
+    public void deleteApp(String name) {
+
+        // Get app id
+        Cursor data = getItemID(name);
+        int id = -1;
+        while (data.moveToNext()) {
+            id = data.getInt(0);
+        }
+        // Update the table here if the item was located
+        if (id > -1) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            String query = "DELETE FROM " + TABLE_NAME + " WHERE " +
+                    COL1 + " = '" + id + "' AND " + COL2 + " ='" + name + "'";
+
+            Log.d(TAG, "deleteApp: query: " + query);
+            Log.d(TAG, "deleteApp: Deleting: " + name + " from database");
+
+            db.execSQL(query);
+        } else {
+            Log.e(TAG, "onItemClick: THE ID WAS NOT ABLE TO BE FOUND");
+        }
     }
 }
 
